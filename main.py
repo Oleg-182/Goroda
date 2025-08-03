@@ -9,26 +9,33 @@ def get_coordinates(city, key):
         if results:
             lat = round(results[0]['geometry']['lat'], 2) # округляем до 2-ч знаков
             lon = round(results[0]['geometry']['lng'], 2) # округляем до 2-ч знаков
-            return f'Широта: {lat}, Долгота: {lon}'
+            country = results[0]['components']['country']
+            if 'state' in  results[0]['components']:
+                region = results[0]['components']['state']
+                return f'Широта: {lat}, Долгота: {lon} Страна: {country}. Регион: {region}'
+            else:
+                return f'Широта: {lat}, Долгота: {lon} Страна: {country}'
+
         else:
             return "Город не найден"
     except Exception as e:
         return f'Возникла ошибка: {e}'
 
 
-def show_coordinates():
+def show_coordinates(event=None):
     city = entry.get()
     coordinates = get_coordinates(city, key)
-    label.config(text=f'Координаты города {city}: {coordinates}')
+    label.config(text=f'Координаты города {city}:\n {coordinates}')
 
 key = 'a036f38429b74435af47ce1876f839d3'
 
 window = Tk()
 window.title('Координаты городов')
-window.geometry('200x100')
+window.geometry('450x100')
 
 entry = Entry()
 entry.pack()
+entry.bind('<Return>', show_coordinates)
 
 button = Button(text='Поиск координат', command=show_coordinates)
 button.pack()
